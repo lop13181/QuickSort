@@ -46,7 +46,7 @@ public class gui{
 					OL[n]=x;
 					n++;
 				}
-				QuickSort QS=new QuickSort();
+				QuickSort QS = new QuickSort();
 				QS.quickSort(OL);
 			}
 		});
