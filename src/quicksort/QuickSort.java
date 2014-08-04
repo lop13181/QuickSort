@@ -3,8 +3,7 @@
  *  Algoritmos y estructura de datos
  *  Hoja de trabajo 3
  *  Método de ordenamiento QuickSort
- *  Programación Java by Enrique García Hernández
- *  http://puntocomnoesunlenguaje.blogspot.com.es
+ *  Professors de les assignatures PRG i EDA, dsic-etsia, UPV
  */
 package quicksort;
 
@@ -13,42 +12,72 @@ package quicksort;
  */
 public class QuickSort {
 
+      private static void intercambiar(Object a[], int ind1, int ind2 )	
+   {
+       Object tmp = a[ind1];	
+       a[ind1] = a[ind2];
+       a[ind2] = tmp;	
+   }
+   // QUICK SORT ------------------------------------------------------------------------------------
+	
     /**
-     * @param args the command line arguments
+     *  Metodo para calculo de la Mediana de 3, devuelve el valor del pivote (Comparable)	
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+   private static Comparable mediana3(Object  a[], int izq, int der )	
+   {	
+       int c=(izq+der)/2;	
+       if (((Comparable)a[c]).compareTo((Comparable)a[izq])<0)   intercambiar (a,izq,c);
+       if (((Comparable)a[der]).compareTo((Comparable)a[izq])<0) intercambiar (a,izq,der);
+       //if (((Comparable)a[der]).compareTo((Comparable)a[c])<0)   intercambiar (a,c,der);
+       
+       if (((Comparable)a[der]).compareTo(a[c])<0)   intercambiar (a,c,der);
+       // (ocultar el pivote en la posicion der-1
+       intercambiar(a,c,der-1);
+       return (Comparable)a[der-1];
+   }
+	
+    /** 
+     *  Algoritmo de ordenacion quicksort (Hoare -1963-)
+     *  Utiliza el algoritmo de particion debido a Weiss, con mediana de 3
+     *  para el calculo del pivote. 
+     *  Los elementos del array a, de tipo Object, deben implementar el interfaz Comparable
+     */
+   public static void quickSort(Object a[]) {
+       quickSort(a,0,a.length-1);
+   }
+   private static void quickSort(Object a[], int izq, int der )
+   {
+       if( izq<der )
+       {
+             Comparable pivot=mediana3(a,izq,der);
+             int i=izq;
+
+             int j=der-1;
+             for( ; i<j; )
+             {    // while(((Comparable)a[++i]).compareTo(pivot)<0) {}
+                  // while(((Comparable)a[--j]).compareTo(pivot)>0) {}
+                  while(pivot.compareTo(a[++i])>0) {}
+                  while(pivot.compareTo(a[--j])<0) {}
+                  intercambiar (a,i,j);
+             }
+             intercambiar (a,i,j);     // Deshacer el ultimo cambio
+             intercambiar (a,i,der-1); // Restaurar el pivote
+             quickSort(a,izq,i-1);     // Ordenar recursivamente los elementos menores
+             quickSort(a,i+1,der);     // Ordenar recursivamente los elementos mayores
+       }
+   }
+    // Metodos de comprobacion y auxialiares 
+
+    /** 
+     *  Para determinar si un array de Object, que implementen el interfaz Comparable  
+     *  esta o no ordenado (ascen/descen)dentemente. 
+     *  Si ascendente es true/false se comprueba la ordenacion ascendente/descendente
+     *  a Sus elementos deben implementar el interfaz Comparable
+     *  ascendentetrue/false --> comprobacion de orden ascendente/descendente 
+     */
+    public static boolean estaOrdenado(Object a[], boolean ascendente) {
+	for (int i=0; i<a.length-1; i++) if (ascendente && (((Comparable)a[i]).compareTo(a[i+1])>0)) return false;
+	else if (!ascendente && (((Comparable)a[i]).compareTo(a[i+1])<0)) return false;
+        return true;
     }
-    public static void quicksort(int A[], int left, int right){
-    
-        int pivote = A[left];   // Toma el primer elemento del Array como pivote
-        int i = left;           // Realiza la búsqueda de izquierda a derecha
-        int j = right;          // Realiza la búsqueda de derecha a izquierda
-        int intercambiar;
-        
-        while(i<j){             // Mientras no se crucen las búsquedas
-            while (A[i] <= pivote && i < j){
-                i++;            // Busca el elemento mayor que el pivote
-            }
-            while (A[j] > pivote){
-                j--;            // Busca el elemento menor que el pivote
-            }
-            
-            if (i<j){           // Si no se han cruzado los intercambia
-                
-                intercambiar = A[i];    // Los intercambia
-                A[i] = A[j];
-                A[j] = intercambiar;
-            }               
-        }
-        
-        A[left] = A[j];         // Se coloca el pivote justo en medio, para tener los
-        A[j] = pivote;          // menores a la izquierda y los mayores a la derecha
-        
-        if (left < j-1)
-            quicksort(A, left, j-1);    // Ordena el array que quedó a la izquierda
-        
-        if (j+1 < right)
-            quicksort(A, j+1, right);   // Ordena el array que quedó a la derecha 
-        }
-    }
+}
